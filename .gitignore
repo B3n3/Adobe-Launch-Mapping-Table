@@ -1,0 +1,5 @@
+node_modules/
+*.zip
+*.iml
+package-lock.json
+.idea/
