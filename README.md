@@ -3,7 +3,8 @@ Adobe Launch - Mapping Table
 
 Provides a rich and versatile mapping table data element.
 
-Supports four different methods:
+Supports five different methods:
+* Regular Expression
 * Exact matches
 * Case insensitive matches
 * Starts with

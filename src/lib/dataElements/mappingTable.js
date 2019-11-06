@@ -33,6 +33,10 @@ module.exports = function (settings) {
                 if (dataElemValue.indexOf(inp) > -1) {
                     return out;
                 }
+            } else if (method === 'regex') {
+                if (new RegExp(inp).test(dataElemValue)) {
+                    return out;
+                }
             }
         }
 

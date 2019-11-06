@@ -131,10 +131,14 @@ function createRow() {
             var opt4 = document.createElement('option');
             opt4.text = 'starts with';
             opt4.value = 'starts with';
+            var opt5 = document.createElement('option');
+            opt5.text = 'regular expression';
+            opt5.value = 'regex';
             select.appendChild(opt1);
             select.appendChild(opt2);
             select.appendChild(opt3);
             select.appendChild(opt4);
+            select.appendChild(opt5);
 
 
             var input = document.createElement('input');
