@@ -12,7 +12,7 @@ Supports five different methods:
 
 Further the output can be static or another data element to offer even more flexibility.  
 E.g. ideal for implementing multiple marketing pixels.  
-Support of Drag-and-Drop for reordering the entries.  
+Support of Drag-and-Drop for re-ordering the entries.  
 
 A **detailed walk through** of some use cases can be found in the [Tutorial PDF](doc/mapping-table-tutorial.pdf).
 

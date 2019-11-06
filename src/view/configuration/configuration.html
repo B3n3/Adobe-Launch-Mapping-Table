@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mapping Table</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://assets.adobedtm.com/activation/reactor/extensionbridge/extensionbridge.min.js"></script>
+</head>
+<body>
+
+
+<h1 style="margin-top: 0">Mapping Table</h1>
+
+<div class="container">
+    <p>Provides a rich and versatile mapping table data element.</p><br/>
+
+    Supports five different methods:
+    <ul>
+        <li>Regular Expression</li>
+        <li>Exact matches</li>
+        <li>Case insensitive matches</li>
+        <li>Starts with</li>
+        <li>Contains</li>
+    </ul>
+
+    <p>
+        Further the output can be static or another data element to offer even more flexibility.<br/>
+        E.g. ideal for implementing multiple marketing pixels.<br/>
+        Support of Drag-and-Drop for re-ordering the entries.<br/><br/>
+
+        A detailed walk through of some use cases can be found in the <a
+            href="https://github.com/B3n3/Adobe-Launch-Mapping-Table/raw/master/doc/mapping-table-tutorial.pdf"
+            target="_blank">Tutorial PDF</a>.
+    </p>
+
+</div>
+
+
+<script>
+    window.extensionBridge.register({
+        init: function () {
+        },
+
+        getSettings: function () {
+            return {};
+        },
+
+        validate: function () {
+            return true;
+        }
+    });
+</script>
+</body>
+</html>
