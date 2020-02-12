@@ -2,7 +2,7 @@
   "displayName": "Mapping Table",
   "name": "mapping-table",
   "platform": "web",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "exchangeUrl": "https://www.adobeexchange.com/experiencecloud.details.103136.html",
   "description": "Provides a rich and versatile mapping table data element. Supports regex, exact matches, case insensitive matches, starts with and contains. Further the output can be static or another data element to offer even more flexibility. E.g. ideal for implementing multiple marketing pixels.",
   "author": {

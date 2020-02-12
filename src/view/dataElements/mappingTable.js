@@ -50,31 +50,39 @@ function drag(ev) {
  */
 function drop(ev) {
     ev.preventDefault();
-    var fromId = ev.dataTransfer.getData("number");
+    var fromId = parseInt(ev.dataTransfer.getData("number"));
     var tr = document.getElementById(ev.target.id).parentNode;
     if (tr.nodeName === 'TR') {
         var toId = parseInt(tr.querySelector('input[type=submit]').id);
 
         var state = collectRows();
-        // Backup data in destination
-        state.tmp = {};
-        for (var k in state[toId]) state['tmp'][k] = state[toId][k];
+        var newState = collectRows(); // other way of deep copy ;)
 
-        // overwrite destination with fromId
-        for (var k in state[toId]) state[toId][k] = state[fromId][k];
+        // Moving a row from the bottom to the top
+        if (toId < fromId) {
+            // Everything before toId stays the same
+            // Everything from incl. toId until fromId gets incremented +1
+            for (var i = toId; i < fromId; i++) {
+                newState[i + 1] = state[i];
+            }
+        } else if (fromId < toId) { // moving a row from the top down
+            // Everything before toId stays the same
+            // Everything from incl. toId until fromId gets incremented +1
+            for (i = fromId + 1; i <= toId; i++) {
+                newState[i - 1] = state[i];
+            }
+        }
 
-        // set fromId to values from backup
-        for (var k in state['tmp']) state[fromId][k] = state['tmp'][k];
+        // overwrite fromId row to toId
+        newState[toId] = state[fromId];
 
-        delete state.tmp;
-        console.log("new state: ", state);
+        console.log("[Mapping Table] New state after drag-and-drop:", newState);
 
         while (idCounter > 0) {
-            console.log('deleting ' + (idCounter - 1));
             deleteRow(idCounter - 1);
         }
 
-        initWithSettings({settings: state})
+        initWithSettings({settings: newState})
     }
 }
 
@@ -92,7 +100,6 @@ function createRow() {
             row.ondragover = function (ev) {
                 ev.preventDefault();
                 var tr = document.getElementById(ev.target.id).parentNode;
-                console.log(tr);
                 if (tr.nodeName === 'TR') {
                     tr.style.backgroundColor = 'green';
                 }
@@ -144,10 +151,22 @@ function createRow() {
             var input = document.createElement('input');
             input.type = 'text';
             input.id = 'input' + idCounter;
+            input.onfocus = function (ev) {
+                row.draggable = false;
+            };
+            input.onblur = function (ev) {
+                row.draggable = true;
+            };
             var output = document.createElement('input');
             output.type = 'text';
             output.id = 'output' + idCounter;
             output.style.width = '90%';
+            output.onfocus = function (ev) {
+                row.draggable = false;
+            };
+            output.onblur = function (ev) {
+                row.draggable = true;
+            };
             var dataElementBtn = document.getElementById('dataElementBtn').cloneNode(true);
             dataElementBtn.style.visibility = 'visible';
             dataElementBtn.onclick = function (i) {
@@ -210,7 +229,7 @@ var collectRows = function () {
  */
 var initWithSettings = function (info) {
     var conf = info.settings;
-    console.warn('info', conf);
+    console.warn('[Mapping Table] Settings:', conf);
     if (typeof conf !== 'undefined' && conf !== null) {
         document.getElementById('dataElement').value = conf.dataElement;
         document.getElementById('defaultValueEmpty').checked = conf.defaultValueEmpty;
