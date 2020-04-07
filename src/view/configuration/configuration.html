@@ -15,9 +15,9 @@
 <div class="container">
     <p>Provides a rich and versatile mapping table data element.</p><br/>
 
-    Supports five different methods:
+    Supports six different methods:
     <ul>
-        <li>Regular Expression</li>
+        <li>Regular Expression (with and without matching)</li>
         <li>Exact matches</li>
         <li>Case insensitive matches</li>
         <li>Starts with</li>
@@ -29,9 +29,20 @@
         E.g. ideal for implementing multiple marketing pixels.<br/>
         Support of Drag-and-Drop for re-ordering the entries.<br/><br/>
 
+        If you are using the regex with matching, you can use the results of your matching groups in the output with the
+        common syntax of <i>$1, $2</i>, etc.<br/>
+        You cannot use the matching <i>$1</i>, etc. within a data element name in the output.
+        e.g. <i>%my element $1%</i> is not supported and will throw an error upon saving the mapping table data element.<br/><br/>
+
         A detailed walk through of some use cases can be found in the <a
             href="https://github.com/B3n3/Adobe-Launch-Mapping-Table/raw/master/doc/mapping-table-tutorial.pdf"
             target="_blank">Tutorial PDF</a>.
+    </p>
+    <hr>
+    <p>
+        Please refer to the
+        <a href="https://github.com/B3n3/Adobe-Launch-Mapping-Table/blob/master/ReleaseNotes.md" target="_blank">
+            Release Notes</a> for an overview of what has changed in the respective version.
     </p>
 
 </div>

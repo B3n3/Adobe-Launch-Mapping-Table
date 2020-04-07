@@ -2,11 +2,11 @@
   "displayName": "Mapping Table",
   "name": "mapping-table",
   "platform": "web",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "exchangeUrl": "https://www.adobeexchange.com/experiencecloud.details.103136.html",
   "description": "Provides a rich and versatile mapping table data element. Supports regex, exact matches, case insensitive matches, starts with and contains. Further the output can be static or another data element to offer even more flexibility. E.g. ideal for implementing multiple marketing pixels.",
   "author": {
-    "name": "Adobe Consulting - Benedikt Wedenik, MSc",
+    "name": "Adobe - Benedikt Wedenik",
     "email": "wedenik@adobe.com"
   },
   "viewBasePath": "src/view/",

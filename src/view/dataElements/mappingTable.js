@@ -141,12 +141,15 @@ function createRow() {
             var opt5 = document.createElement('option');
             opt5.text = 'regular expression';
             opt5.value = 'regex';
+            var opt6 = document.createElement('option');
+            opt6.text = 'regular expression (matching)';
+            opt6.value = 'regex matching';
             select.appendChild(opt1);
             select.appendChild(opt2);
             select.appendChild(opt3);
             select.appendChild(opt4);
             select.appendChild(opt5);
-
+            select.appendChild(opt6);
 
             var input = document.createElement('input');
             input.type = 'text';
@@ -243,27 +246,67 @@ var initWithSettings = function (info) {
 };
 
 /**
+ * Check whether or not a string placed in the regex (matching) output contains a matching group within a data element
+ *
+ * E.g. "%abc $1% - %cde%" --> bad
+ * but "%abc % $1 - %cde% --> fine
+ * @param str the string to check
+ * @returns true if it contains matching group inside a data element, false if not
+ */
+var checkDataElementStringContainsMatchingGroup = function (str) {
+    var inside = false;
+    var elem = '';
+    for (var i = 0; i < str.length; i++) {
+        var l = str[i];
+        if (l === '%') {
+            inside = !inside;
+            if (inside === true) {
+                elem = '';
+            } else {
+                if (/\$[0-9]+/.test(elem) === true) {
+                    return true;
+                }
+            }
+        }
+        elem += l;
+    }
+    return false;
+};
+
+/**
+ * Check if dataElement is set, all input and output fields are set and the regex matching group is used correctly.
+ * @returns {boolean}
+ */
+var validationFn = function () {
+    if (document.getElementById('dataElement').value === '') {
+        return false;
+    }
+
+    for (var i = 0; i < idCounter; i++) {
+        var inp = document.getElementById('input' + i).value;
+        var out = document.getElementById('output' + i).value;
+        if (inp === '' || out === '') {
+            return false;
+        }
+
+        // Check "regex matching" output values
+        if (document.getElementById('select' + i).value === 'regex matching') {
+            if (checkDataElementStringContainsMatchingGroup(out)) {
+                var errorMsg = 'Output in row ' + (i + 1) + ' contains a matching group inside a data element!';
+                console.error(errorMsg);
+                alert(errorMsg);
+                return false;
+            }
+        }
+    }
+    return true;
+};
+
+/**
  * Setup the required listeners for Launch
  */
 window.extensionBridge.register({
     init: initWithSettings,
-
-    getSettings: function () {
-        return collectRows();
-    },
-
-    validate: function () {
-        if (document.getElementById('dataElement').value === '') {
-            return false;
-        }
-
-        for (var i = 0; i < idCounter; i++) {
-            var inp = document.getElementById('input' + i).value;
-            var out = document.getElementById('output' + i).value;
-            if (inp === '' || out === '') {
-                return false;
-            }
-        }
-        return true;
-    }
+    getSettings: collectRows,
+    validate: validationFn
 });

@@ -37,6 +37,17 @@ module.exports = function (settings) {
                 if (new RegExp(inp).test(dataElemValue)) {
                     return out;
                 }
+            } else if (method === 'regex matching') {
+                var match = dataElemValue.match(new RegExp(inp));
+                if (match !== null) {
+                    // We need to go top down to match $12 before matching $1
+                    // match[0] is the whole match, thus we start / end with index 1
+                    for (var j = (match.length - 1); j >= 1; j--) {
+                        // Split-join is a way to replace all occurrences
+                        out = out.split('$' + j).join(match[j]);
+                    }
+                    return out;
+                }
             }
         }
 
