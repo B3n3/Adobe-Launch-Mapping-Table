@@ -1,4 +1,4 @@
-# 1.0.9
+# 1.1.0
 
 * Added a new matching method: **regular expression (matching)**. \
 This allows you to use the results of your matching groups in the output with the common syntax of `$1`, `$2`, etc. \
