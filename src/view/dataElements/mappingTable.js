@@ -15,6 +15,70 @@ document.getElementById('dataElementBtn').onclick = function () {
 };
 
 /**
+ * Set onclick listener for JSON edit button
+ */
+document.getElementById('editJson').onclick = function () {
+    window.extensionBridge.openCodeEditor({
+        code: JSON.stringify(collectRows(), undefined, 4),
+        language: 'json'
+    }).then(function (config) {
+        try {
+            var newConfig = JSON.parse(config);
+            while (idCounter > 0) {
+                deleteRow(idCounter - 1);
+            }
+            initWithSettings({settings: newConfig});
+        } catch (e) {
+            console.error(e.message);
+        }
+    });
+}
+
+/**
+ * Set onclick listener for CSV edit button
+ */
+document.getElementById('editCsv').onclick = function () {
+    var csv = '"method","input","output"';
+    var settings = collectRows();
+    for (var i = 0; i < idCounter; i++) {
+        csv += '\n"' + settings[i].method + '","' + settings[i].input + '","' + settings[i].output + '"'
+    }
+    window.extensionBridge.openCodeEditor({
+        code: csv,
+        language: 'plaintext'
+    }).then(function (config) {
+        console.log(config);
+        var rows = config.split('\n');
+
+        while (idCounter > 0) {
+            deleteRow(idCounter - 1);
+        }
+
+        var newConfig = collectRows();
+        // skip first row (headers)
+        for (var i = 1; i < rows.length; i++) {
+            var row = new RegExp(/^"(.*)","(.*)","(.*)"$/).exec(rows[i])
+            if (row !== null && row.length === 4) {
+                newConfig[i - 1] = {
+                    method: row[1],
+                    input: row[2],
+                    output: row[3]
+                }
+            } else {
+                newConfig[i - 1] = {
+                    method: 'exact match',
+                    input: '',
+                    output: ''
+                }
+                console.error('Error while parsing CSV. Invalid input.');
+            }
+        }
+        newConfig.size = rows.length - 1; // exclude headers
+        initWithSettings({settings: newConfig})
+    });
+}
+
+/**
  * Delete a row, given an ID
  * @param rowId numeric ID
  */
@@ -144,12 +208,31 @@ function createRow() {
             var opt6 = document.createElement('option');
             opt6.text = 'regular expression (matching)';
             opt6.value = 'regex matching';
+            var opt7 = document.createElement('option');
+            opt7.text = 'is true';
+            opt7.value = 'is true';
+            var opt8 = document.createElement('option');
+            opt8.text = 'is false';
+            opt8.value = 'is false';
             select.appendChild(opt1);
             select.appendChild(opt2);
             select.appendChild(opt3);
             select.appendChild(opt4);
             select.appendChild(opt5);
             select.appendChild(opt6);
+            select.appendChild(opt7);
+            select.appendChild(opt8);
+
+            // Disable Input fields when selecting 'is true' or 'is false' matching method
+            select.onchange = (function (idCounter) {
+                return function (elem) {
+                    var disabled = false;
+                    if (elem.target.value === 'is true' || elem.target.value === 'is false') {
+                        disabled = true;
+                    }
+                    document.getElementById('input' + idCounter).disabled = disabled;
+                }
+            })(idCounter);
 
             var input = document.createElement('input');
             input.type = 'text';
@@ -170,6 +253,7 @@ function createRow() {
             output.onblur = function (ev) {
                 row.draggable = true;
             };
+
             var dataElementBtn = document.getElementById('dataElementBtn').cloneNode(true);
             dataElementBtn.style.visibility = 'visible';
             dataElementBtn.onclick = function (i) {
@@ -179,6 +263,7 @@ function createRow() {
                     });
                 };
             }(idCounter);
+
             var deleteBtn = document.createElement('input');
             deleteBtn.type = 'submit';
             deleteBtn.value = 'x';
@@ -238,8 +323,15 @@ var initWithSettings = function (info) {
         document.getElementById('defaultValueEmpty').checked = conf.defaultValueEmpty;
         for (var i = 0; i < conf.size; i++) {
             createRow();
-            document.getElementById('select' + i).value = conf[i].method;
-            document.getElementById('input' + i).value = conf[i].input;
+            var disable = false;
+            var method = conf[i].method;
+            if (method === 'is true' || method === 'is false') {
+                disable = true;
+            }
+            document.getElementById('select' + i).value = method;
+            var inputElem = document.getElementById('input' + i);
+            inputElem.value = conf[i].input;
+            inputElem.disabled = disable;
             document.getElementById('output' + i).value = conf[i].output;
         }
     }
@@ -285,8 +377,15 @@ var validationFn = function () {
     for (var i = 0; i < idCounter; i++) {
         var inp = document.getElementById('input' + i).value;
         var out = document.getElementById('output' + i).value;
-        if (inp === '' || out === '') {
-            return false;
+        var method = document.getElementById('select' + i).value;
+        if (method === 'is true' || method === 'is false') {
+            if (out === '' || inp !== '') {
+                return false;
+            }
+        } else {
+            if (inp === '' || out === '') {
+                return false;
+            }
         }
 
         // Check "regex matching" output values

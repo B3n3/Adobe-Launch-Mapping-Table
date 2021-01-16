@@ -1,3 +1,11 @@
+# 1.1.1
+
+* Added `is true` and `is false` matching methods.
+* Added the option to edit the Mapping Table as JSON and CSV directly from within the data element.
+  This is useful for importing and exporting data.
+* Improved error handling: \
+  In case of an error during the matching process, the data element default value or the given (faulty) input value is returned, depending on the mapping table configuration.
+
 # 1.1.0
 
 * Added a new matching method: **regular expression (matching)**. \

@@ -13,42 +13,70 @@ module.exports = function (settings) {
         var dataElemValue = settings.dataElement;
         addStartsWithToIE();
 
-        for (var i = 0; i < settings.size; i++) {
-            var method = settings[i].method;
-            var out = settings[i].output;
-            var inp = settings[i].input;
-            if (method === 'exact match') {
-                if (dataElemValue === inp) {
-                    return out;
-                }
-            } else if (method === 'exact match i') {
-                if (dataElemValue.toLowerCase() === inp.toLowerCase()) {
-                    return out;
-                }
-            } else if (method === 'starts with') {
-                if (dataElemValue.startsWith(inp)) {
-                    return out;
-                }
-            } else if (method === 'contains') {
-                if (dataElemValue.indexOf(inp) > -1) {
-                    return out;
-                }
-            } else if (method === 'regex') {
-                if (new RegExp(inp).test(dataElemValue)) {
-                    return out;
-                }
-            } else if (method === 'regex matching') {
-                var match = dataElemValue.match(new RegExp(inp));
-                if (match !== null) {
-                    // We need to go top down to match $12 before matching $1
-                    // match[0] is the whole match, thus we start / end with index 1
-                    for (var j = (match.length - 1); j >= 1; j--) {
-                        // Split-join is a way to replace all occurrences
-                        out = out.split('$' + j).join(match[j]);
+        try {
+            for (var i = 0; i < settings.size; i++) {
+                var method = settings[i].method;
+                var out = settings[i].output;
+                var inp = settings[i].input;
+
+                if (method === 'exact match') {
+                    if (dataElemValue === inp) {
+                        return out;
                     }
-                    return out;
+                } else if (method === 'exact match i') {
+                    if (typeof dataElemValue === 'boolean') {
+                        continue;
+                    }
+                    if (dataElemValue.toLowerCase() === inp.toLowerCase()) {
+                        return out;
+                    }
+                } else if (method === 'starts with') {
+                    if (typeof dataElemValue === 'boolean') {
+                        continue;
+                    }
+                    if (dataElemValue.startsWith(inp)) {
+                        return out;
+                    }
+                } else if (method === 'contains') {
+                    if (typeof dataElemValue === 'boolean') {
+                        continue;
+                    }
+                    if (dataElemValue.indexOf(inp) > -1) {
+                        return out;
+                    }
+                } else if (method === 'regex') {
+                    if (typeof dataElemValue === 'boolean') {
+                        continue;
+                    }
+                    if (new RegExp(inp).test(dataElemValue)) {
+                        return out;
+                    }
+                } else if (method === 'regex matching') {
+                    if (typeof dataElemValue === 'boolean') {
+                        continue;
+                    }
+                    var match = dataElemValue.match(new RegExp(inp));
+                    if (match !== null) {
+                        // We need to go top down to match $12 before matching $1
+                        // match[0] is the whole match, thus we start / end with index 1
+                        for (var j = (match.length - 1); j >= 1; j--) {
+                            // Split-join is a way to replace all occurrences
+                            out = out.split('$' + j).join(match[j]);
+                        }
+                        return out;
+                    }
+                } else if (method === 'is true') {
+                    if (dataElemValue === true) {
+                        return out;
+                    }
+                } else if (method === 'is false') {
+                    if (dataElemValue === false) {
+                        return out;
+                    }
                 }
             }
+        } catch (e) {
+            turbine.logger.error('Error during evaluation: ' + e.message);
         }
 
         if (settings.defaultValueEmpty === true) {
