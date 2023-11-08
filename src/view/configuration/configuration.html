@@ -37,7 +37,27 @@
         common syntax of <i>$1, $2</i>, etc.<br/>
         You cannot use the matching <i>$1</i>, etc. within a data element name in the output.
         e.g. <i>%my element $1%</i> is not supported and will throw an error upon saving the mapping table data element.<br/><br/>
+    </p>
 
+    <h2>Basic Usage</h2>
+    <p>Select a <b>Data Element</b> to be searched for matches - this can either be a single value such as <i>%pageName%</i> or an array, like <i>%productsInCart%</i>.</p>
+
+    <p>When an array is given, each element of the array will be searched, and a corresponding mapping given, resulting in an output which is an array, of the same length as the input array.</p>
+
+    <p>Click the <b>+</b> sign to add a mapping row. Order matters - higher rows will be considered first and the search for a match will end with the first successful match. You can drag and drop rows to change the order.</p>
+
+    <p>Within each row choose:</p>
+    <ul>
+        <li>A <b>Method</b> - possible methods are mentioned above</li>
+        <li>An <b>Input</b> - this is what you are looking to match within the Data Element.</li>
+        <li>An <b>Output</b> - this is what you want to transform the Input into</li>
+    </ul>
+
+    <p>E.g. if the Method is "Contains", the Input is "meaning of life", the Output is "42", and the Data Element is "what is the answer to the meaning of life?" then the output will be "42"</p>
+
+    <p>Check the <b>Default Value</b> at the top if you want to pass through the original value in the case that no match has been found. If unselected and no match is found, the output value will be <i>undefined</i>.</p>
+
+    <p>
         A detailed walk through of some use cases can be found in the <a
             href="https://github.com/B3n3/Adobe-Launch-Mapping-Table/raw/master/doc/mapping-table-tutorial.pdf"
             target="_blank">Tutorial PDF</a>.
